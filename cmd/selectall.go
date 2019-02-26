@@ -7,8 +7,8 @@ import (
 
 var selectallCmd = &cobra.Command{
 	Use:   "selectall",
-	Short: "Userモデルの全セレクト",
-	Long:  `Userモデルの全セレクト`,
+	Short: "Userモデルの全セレクト Short",
+	Long:  `Userモデルの全セレクト Long`,
 	Run: func(cmd *cobra.Command, args []string) {
 		db.SelectAll()
 	},

@@ -7,8 +7,8 @@ import (
 
 var newCmd = &cobra.Command{
 	Use:   "new",
-	Short: "テーブルがあれば削除して初期化する。",
-	Long:  `テーブルがあれば削除して初期化する。`,
+	Short: "テーブル初期 Short",
+	Long:  `テーブルがあれば削除、なければ新規作成して初期化する。Long`,
 	Run: func(cmd *cobra.Command, args []string) {
 		db.InitializeTable()
 	},

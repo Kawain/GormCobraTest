@@ -208,3 +208,18 @@ func SelectAll() {
 
 	fmt.Println(string(jsonBytes))
 }
+
+func Insert(user *User) {
+	db := DBopen()
+	defer db.Close()
+
+	db.Create(user)
+}
+
+func Update() {
+
+}
+
+func Delete() {
+
+}
