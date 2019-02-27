@@ -53,6 +53,7 @@ func DBopen() *gorm.DB {
 	if err != nil {
 		panic("Failed to connect database")
 	}
+	db.LogMode(false)
 	return db
 }
 
@@ -209,17 +210,55 @@ func SelectAll() {
 	fmt.Println(string(jsonBytes))
 }
 
-func Insert(user *User) {
+// Result 構造体
+type Result struct {
+	Message string `json:"message"`
+}
+
+// Insert 新規追加
+func Insert(user *User) error {
 	db := DBopen()
 	defer db.Close()
 
-	db.Create(user)
+	// トランザクションを開始します
+	tx := db.Begin()
+
+	// データベース操作をトランザクション内で行います(ここからは'db'でなく'tx'を使います)
+	err := tx.Create(user).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
-func Update() {
+// Update 更新
+func Update(user *User) error {
+	db := DBopen()
+	defer db.Close()
 
+	tx := db.Begin()
+	err := tx.Save(user).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
-func Delete() {
+// Delete 論理削除
+func Delete(user *User) error {
+	db := DBopen()
+	defer db.Close()
 
+	tx := db.Begin()
+	err := tx.Delete(user).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }

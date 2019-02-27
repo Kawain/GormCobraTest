@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/Kawain/GormCobraTest/db"
@@ -14,30 +15,63 @@ var insertCmd = &cobra.Command{
 	Use:   "insert",
 	Short: "Short insert",
 	Long:  `Long insert`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("insert called")
-
+	RunE: func(cmd *cobra.Command, args []string) error {
 		user := db.User{}
-		user.Name, _ = cmd.Flags().GetString("name")
-		user.Katakana, _ = cmd.Flags().GetString("kaka")
+		var err error
+		user.Name, err = cmd.Flags().GetString("name")
+		if err != nil {
+			return err
+		}
 
-		sex, _ := cmd.Flags().GetInt("sex")
-		user.GenderID = uint(sex)
+		user.Katakana, err = cmd.Flags().GetString("kaka")
+		if err != nil {
+			return err
+		}
 
-		user.Tel, _ = cmd.Flags().GetString("tel")
-		user.Mail, _ = cmd.Flags().GetString("mail")
-		user.Birthday, _ = cmd.Flags().GetString("birthday")
+		user.GenderID, err = cmd.Flags().GetUint("sex")
+		if err != nil {
+			return err
+		}
 
-		age, _ := cmd.Flags().GetInt("age")
-		user.Age = uint(age)
+		user.Tel, err = cmd.Flags().GetString("tel")
+		if err != nil {
+			return err
+		}
 
-		hometown, _ := cmd.Flags().GetInt("hometown")
-		user.HometownID = uint(hometown)
+		user.Mail, err = cmd.Flags().GetString("mail")
+		if err != nil {
+			return err
+		}
 
-		bloodtype, _ := cmd.Flags().GetInt("bloodtype")
-		user.BloodTypeID = uint(bloodtype)
+		user.Birthday, err = cmd.Flags().GetString("birthday")
+		if err != nil {
+			return err
+		}
 
-		db.Insert(&user)
+		user.Age, err = cmd.Flags().GetUint("age")
+		if err != nil {
+			return err
+		}
+
+		user.HometownID, err = cmd.Flags().GetUint("hometown")
+		if err != nil {
+			return err
+		}
+
+		user.BloodTypeID, err = cmd.Flags().GetUint("bloodtype")
+		if err != nil {
+			return err
+		}
+
+		err = db.Insert(&user)
+		if err != nil {
+			return err
+		}
+		m := db.Result{Message: "ok"}
+		b, _ := json.Marshal(m)
+		fmt.Println(string(b))
+
+		return nil
 	},
 }
 
@@ -46,11 +80,11 @@ func init() {
 
 	insertCmd.Flags().StringP("name", "1", "", "Name string option")
 	insertCmd.Flags().StringP("kaka", "2", "", "Katakana string option")
-	insertCmd.Flags().IntP("sex", "3", 0, "GenderID integer option")
+	insertCmd.Flags().UintP("sex", "3", 0, "GenderID integer option")
 	insertCmd.Flags().StringP("tel", "4", "", "Tel string option")
 	insertCmd.Flags().StringP("mail", "5", "", "Mail string option")
 	insertCmd.Flags().StringP("birthday", "6", "", "Birthday string option")
-	insertCmd.Flags().IntP("age", "7", 0, "Age integer option")
-	insertCmd.Flags().IntP("hometown", "8", 0, "HometownID integer option")
-	insertCmd.Flags().IntP("bloodtype", "9", 0, "BloodTypeID integer option")
+	insertCmd.Flags().UintP("age", "7", 0, "Age integer option")
+	insertCmd.Flags().UintP("hometown", "8", 0, "HometownID integer option")
+	insertCmd.Flags().UintP("bloodtype", "9", 0, "BloodTypeID integer option")
 }
